@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ELONA JEWELRY — Fashion Earrings</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --gold: #C4973A; --gold-light: #E8D5A3; --gold-pale: #F5EDD8;
+      --cream: #FAF8F4; --ink: #1C1712; --warm: #2E261C;
+      --muted: #7A6A52; --border: rgba(196,151,58,0.2);
+      --serif: 'Cormorant Garamond', Georgia, serif;
+      --sans: 'Jost', sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--cream); color: var(--ink); font-family: var(--sans); font-weight: 300; line-height: 1.7; overflow-x: hidden; }
+
+    /* ── NAV ─────────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.6rem 5rem;
+      background: rgba(250,248,244,0.96); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border); transition: padding .3s;
+    }
+    nav.scrolled { padding: 1rem 5rem; }
+    .nav-logo { font-family: var(--serif); font-size: 1.4rem; letter-spacing: .3em; color: var(--ink); text-decoration: none; font-weight: 400; text-transform: uppercase; }
+    .nav-logo em { font-style: normal; color: var(--gold); }
+    .nav-links { display: flex; gap: 3rem; list-style: none; }
+    .nav-links a { font-size: .68rem; font-weight: 400; letter-spacing: .22em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color .2s; }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-order { font-size: .65rem; font-weight: 500; letter-spacing: .2em; text-transform: uppercase; color: var(--cream); background: var(--gold); text-decoration: none; padding: .7rem 1.8rem; transition: background .2s; }
+    .nav-order:hover { background: #a37d2e; }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; border: none; background: none; padding: 4px; }
+    .hamburger span { display: block; width: 22px; height: 1px; background: var(--ink); }
+
+    /* ── HERO ────────────────────────────────────────── */
+    #hero { min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr; }
+    .hero-left {
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 10rem 5rem 6rem 5rem;
+      background: var(--cream);
+    }
+    .hero-tag { font-size: .62rem; letter-spacing: .4em; text-transform: uppercase; color: var(--gold); margin-bottom: 1.8rem; display: flex; align-items: center; gap: .8rem; }
+    .hero-tag::before { content: ''; display: block; width: 28px; height: 1px; background: var(--gold); }
+    .hero-h1 { font-family: var(--serif); font-size: clamp(3.2rem, 4.5vw, 5.5rem); font-weight: 300; line-height: 1.06; color: var(--ink); margin-bottom: 1.8rem; }
+    .hero-h1 i { font-style: italic; color: var(--gold); }
+    .hero-sub { font-size: .9rem; color: var(--muted); max-width: 380px; line-height: 2; margin-bottom: 3rem; }
+    .hero-btns { display: flex; gap: 1.2rem; align-items: center; margin-bottom: 4rem; }
+    .btn-gold { font-size: .68rem; font-weight: 500; letter-spacing: .22em; text-transform: uppercase; color: var(--cream); background: var(--gold); text-decoration: none; padding: 1.1rem 2.6rem; transition: background .2s, transform .2s; }
+    .btn-gold:hover { background: #a37d2e; transform: translateY(-2px); }
+    .btn-ghost { font-size: .68rem; font-weight: 400; letter-spacing: .18em; text-transform: uppercase; color: var(--ink); text-decoration: none; border-bottom: 1px solid rgba(28,23,18,.25); padding-bottom: 2px; transition: color .2s, border-color .2s; }
+    .btn-ghost:hover { color: var(--gold); border-color: var(--gold); }
+    .hero-nums { display: flex; gap: 3rem; }
+    .hero-num-val { font-family: var(--serif); font-size: 2.2rem; color: var(--gold); font-weight: 400; line-height: 1; }
+    .hero-num-label { font-size: .6rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); margin-top: .3rem; }
+    .hero-right { position: relative; overflow: hidden; }
+    .hero-mosaic { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; height: 100%; gap: 4px; }
+    .hero-mosaic img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .hero-mosaic .span2 { grid-row: span 2; }
+    .hero-badge {
+      position: absolute; bottom: 2.5rem; left: 2.5rem;
+      background: var(--cream); padding: 1.2rem 1.6rem;
+      border-left: 2px solid var(--gold);
+      font-family: var(--serif); font-size: .9rem; font-style: italic; color: var(--ink);
+      line-height: 1.5;
+    }
+
+    /* ── TICKER ──────────────────────────────────────── */
+    .ticker { background: var(--ink); padding: .85rem 0; overflow: hidden; }
+    .ticker-track { display: flex; gap: 0; animation: tick 28s linear infinite; white-space: nowrap; }
+    .ticker-item { display: flex; align-items: center; gap: 2.5rem; padding-right: 2.5rem; flex-shrink: 0; }
+    .ticker-item span { font-size: .6rem; letter-spacing: .32em; text-transform: uppercase; color: rgba(232,213,163,.65); }
+    .ticker-item em { color: var(--gold); font-style: normal; font-size: .45rem; }
+    @keyframes tick { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* ── SECTION SHARED ──────────────────────────────── */
+    .s-tag { font-size: .6rem; letter-spacing: .38em; text-transform: uppercase; color: var(--gold); display: flex; align-items: center; gap: .7rem; }
+    .s-tag::before { content: ''; display: block; width: 22px; height: 1px; background: var(--gold); }
+    .s-title { font-family: var(--serif); font-size: clamp(2rem, 3vw, 3.2rem); font-weight: 300; line-height: 1.15; color: var(--ink); }
+    .s-title i { font-style: italic; color: var(--gold); }
+    .rule { width: 40px; height: 1px; background: var(--gold); margin: 1.4rem 0; }
+
+    /* ── VIEW COLLECTIONS ────────────────────────────── */
+    #collections { background: var(--warm); padding: 7rem 5rem; }
+    .col-head { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 3.5rem; }
+    .col-head .s-title, .col-head .s-tag { color: var(--cream); }
+    .col-head .s-tag::before { background: var(--gold); }
+    .see-all { font-size: .62rem; letter-spacing: .2em; text-transform: uppercase; color: var(--gold-light); text-decoration: none; border-bottom: 1px solid rgba(232,213,163,.3); padding-bottom: 2px; transition: color .2s; }
+    .see-all:hover { color: var(--gold); }
+    .col-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr; grid-template-rows: 320px 240px; gap: 6px; }
+    .col-card { position: relative; overflow: hidden; cursor: pointer; }
+    .col-card.tall { grid-row: span 2; }
+    .col-card img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s cubic-bezier(.25,.46,.45,.94); }
+    .col-card:hover img { transform: scale(1.07); }
+    .col-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(18,14,10,.85) 0%, rgba(18,14,10,.1) 55%);
+      display: flex; flex-direction: column; justify-content: flex-end; padding: 1.6rem 1.8rem;
+      transition: background .4s;
+    }
+    .col-card:hover .col-overlay { background: linear-gradient(to top, rgba(18,14,10,.9) 0%, rgba(18,14,10,.2) 55%); }
+    .col-label { font-family: var(--serif); font-size: 1.3rem; font-weight: 300; color: #fff; margin-bottom: .3rem; }
+    .col-sub { font-size: .6rem; letter-spacing: .18em; text-transform: uppercase; color: var(--gold-light); opacity: .8; }
+    .col-arrow { position: absolute; top: 1.2rem; right: 1.2rem; width: 34px; height: 34px; border: 1px solid rgba(196,151,58,.5); display: flex; align-items: center; justify-content: center; color: var(--gold); font-size: .9rem; opacity: 0; transition: opacity .3s; }
+    .col-card:hover .col-arrow { opacity: 1; }
+
+    /* ── SHOP GRID ───────────────────────────────────── */
+    #shop { padding: 8rem 5rem; }
+    .shop-head { text-align: center; margin-bottom: 5rem; }
+    .shop-head .rule { margin: 1.4rem auto; }
+    .shop-head .s-tag { justify-content: center; }
+    .shop-head .s-tag::before { display: none; }
+    .shop-head .s-title { margin-top: .8rem; }
+    .products-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2.4rem 2rem; }
+    .p-card { cursor: default; }
+    .p-img { position: relative; overflow: hidden; background: #F0EBE2; aspect-ratio: 1 / 1.05; margin-bottom: 1.1rem; }
+    .p-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; display: block; }
+    .p-card:hover .p-img img { transform: scale(1.07); }
+    .p-wish { position: absolute; top: .75rem; right: .75rem; width: 28px; height: 28px; background: rgba(250,248,244,.88); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: .8rem; transition: all .2s; z-index: 2; }
+    .p-wish:hover, .p-wish.on { background: var(--gold); color: #fff; border-color: var(--gold); }
+    .p-cat { font-size: .56rem; letter-spacing: .22em; text-transform: uppercase; color: var(--gold); margin-bottom: .3rem; }
+    .p-name { font-family: var(--serif); font-size: 1rem; color: var(--ink); line-height: 1.3; margin-bottom: .25rem; }
+    .p-price { font-size: .82rem; font-weight: 500; color: var(--ink); margin-bottom: .2rem; letter-spacing: .02em; }
+    .p-price .ksh { font-size: .62rem; color: var(--muted); font-weight: 300; margin-left: .15rem; }
+    .p-desc { font-size: .72rem; color: var(--muted); line-height: 1.65; }
+    /* Sold out */
+    .sold-overlay { position: absolute; inset: 0; background: rgba(28,23,18,.52); display: flex; align-items: center; justify-content: center; z-index: 3; }
+    .sold-label { background: var(--ink); color: var(--cream); font-size: .58rem; font-weight: 500; letter-spacing: .24em; text-transform: uppercase; padding: .5rem 1.1rem; border: 1px solid rgba(232,213,163,.35); }
+    .p-card.sold .p-img img { filter: grayscale(25%); }
+    .p-card.sold .p-wish { pointer-events: none; opacity: .35; }
+    .p-card.sold .p-name { color: var(--muted); }
+    .p-card.sold .p-price { color: var(--muted); }
+
+    /* ── REVIEWS ─────────────────────────────────────── */
+    #reviews { background: #F3EFE8; padding: 7rem 5rem; }
+    .rev-head { text-align: center; margin-bottom: 4.5rem; }
+    .rev-head .rule { margin: 1.4rem auto; }
+    .rev-head .s-tag { justify-content: center; }
+    .rev-head .s-tag::before { display: none; }
+    .rev-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; align-items: start; }
+
+    /* Chat-style card */
+    .rev-card {
+      background: #fff;
+      border-radius: 4px;
+      box-shadow: 0 4px 28px rgba(28,23,18,.08);
+      overflow: hidden;
+      display: flex; flex-direction: column;
+    }
+    .rev-card-header {
+      background: #075E54; padding: .9rem 1.2rem;
+      display: flex; align-items: center; gap: .8rem;
+    }
+    .rev-avatar { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .9rem; color: #fff; font-weight: 600; flex-shrink: 0; }
+    .av-a { background: linear-gradient(135deg, #C4973A, #8a6620); }
+    .av-b { background: linear-gradient(135deg, #128C7E, #075E54); }
+    .av-c { background: linear-gradient(135deg, #9a6a8a, #6a3a5a); }
+    .rev-header-text { flex: 1; }
+    .rev-name { font-size: .78rem; font-weight: 600; color: #fff; }
+    .rev-meta { font-size: .62rem; color: rgba(255,255,255,.65); margin-top: .1rem; }
+    .rev-wa-icon { font-size: 1rem; color: rgba(255,255,255,.7); }
+    .rev-body { background: #ECE5DD; padding: 1.2rem; display: flex; flex-direction: column; gap: .7rem; flex: 1; }
+    .rev-bubble {
+      background: #fff; border-radius: 0 8px 8px 8px;
+      padding: .7rem 1rem .6rem; max-width: 88%;
+      box-shadow: 0 1px 3px rgba(0,0,0,.12);
+      position: relative;
+    }
+    .rev-bubble::before {
+      content: ''; position: absolute; top: 0; left: -7px;
+      border: 7px solid transparent; border-top: 0;
+      border-right-color: #fff; border-bottom: 7px solid #fff;
+      width: 0; height: 0;
+    }
+    .rev-bubble p { font-size: .84rem; color: #303030; line-height: 1.55; }
+    .rev-bubble .ts { font-size: .6rem; color: #999; float: right; margin: .3rem 0 0 1.2rem; }
+    .rev-img-bubble {
+      background: #fff; border-radius: 0 8px 8px 8px;
+      overflow: hidden; max-width: 80%;
+      box-shadow: 0 1px 3px rgba(0,0,0,.12);
+    }
+    .rev-img-bubble img { width: 100%; display: block; max-height: 180px; object-fit: cover; }
+    .rev-stars-row { display: flex; gap: 3px; padding: .6rem 1rem .2rem; }
+    .rev-stars-row span { color: var(--gold); font-size: .8rem; }
+    .rev-verified-bar {
+      background: var(--gold-pale); border-top: 1px solid var(--border);
+      padding: .6rem 1rem; display: flex; align-items: center; gap: .5rem;
+      font-size: .6rem; letter-spacing: .15em; text-transform: uppercase; color: var(--gold);
+    }
+
+    /* ── INSTAGRAM ───────────────────────────────────── */
+    #instagram { background: var(--ink); padding: 5.5rem 5rem; }
+    .insta-top { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2.5rem; }
+    .insta-top .s-title { color: var(--cream); }
+    .insta-top .s-tag { color: var(--gold); }
+    .insta-handle { font-size: .72rem; letter-spacing: .15em; color: var(--gold-light); text-decoration: none; display: flex; align-items: center; gap: .7rem; transition: color .2s; }
+    .insta-handle:hover { color: var(--gold); }
+    .ig-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; }
+    .ig-cell { aspect-ratio: 1; overflow: hidden; position: relative; cursor: pointer; }
+    .ig-cell img { width: 100%; height: 100%; object-fit: cover; transition: transform .45s ease; display: block; }
+    .ig-cell:hover img { transform: scale(1.1); }
+    .ig-over { position: absolute; inset: 0; background: rgba(196,151,58,.3); opacity: 0; transition: opacity .3s; display: flex; align-items: center; justify-content: center; }
+    .ig-over span { font-size: .6rem; letter-spacing: .2em; text-transform: uppercase; color: #fff; }
+    .ig-cell:hover .ig-over { opacity: 1; }
+    .insta-cta { text-align: center; margin-top: 2.5rem; }
+    .btn-outline-gold { font-size: .65rem; font-weight: 500; letter-spacing: .2em; text-transform: uppercase; color: var(--gold); text-decoration: none; border: 1px solid rgba(196,151,58,.45); padding: .9rem 2.2rem; display: inline-block; transition: background .2s, color .2s; }
+    .btn-outline-gold:hover { background: var(--gold); color: var(--ink); }
+
+    /* ── FOOTER ──────────────────────────────────────── */
+    footer { background: var(--warm); color: rgba(232,213,163,.5); padding: 4.5rem 5rem 2.5rem; }
+    .footer-inner { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 5rem; padding-bottom: 3.5rem; border-bottom: 1px solid rgba(196,151,58,.12); }
+    .footer-brand-logo { font-family: var(--serif); font-size: 1.5rem; font-weight: 400; color: var(--cream); letter-spacing: .25em; text-transform: uppercase; margin-bottom: 1rem; }
+    .footer-brand-logo em { font-style: normal; color: var(--gold); }
+    .footer-brand p { font-size: .78rem; line-height: 1.9; max-width: 260px; }
+    .footer-social { display: flex; gap: .7rem; margin-top: 2rem; }
+    .soc { width: 34px; height: 34px; border: 1px solid rgba(196,151,58,.2); display: flex; align-items: center; justify-content: center; color: var(--gold-light); text-decoration: none; font-size: .8rem; transition: all .2s; }
+    .soc:hover { border-color: var(--gold); color: var(--gold); }
+    .footer-col h5 { font-size: .6rem; font-weight: 500; letter-spacing: .28em; text-transform: uppercase; color: var(--cream); margin-bottom: 1.5rem; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: .7rem; }
+    .footer-col ul a { font-size: .78rem; color: rgba(232,213,163,.45); text-decoration: none; transition: color .2s; }
+    .footer-col ul a:hover { color: var(--gold); }
+    .footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 2rem; font-size: .62rem; letter-spacing: .08em; }
+    .footer-bottom a { color: var(--gold); text-decoration: none; }
+
+    /* ── NEWSLETTER BAR ──────────────────────────────── */
+    .nl-bar { background: var(--gold); padding: 2.2rem 5rem; display: flex; align-items: center; justify-content: space-between; gap: 3rem; }
+    .nl-text { font-family: var(--serif); font-size: 1.2rem; font-style: italic; color: var(--ink); }
+    .nl-form { display: flex; flex: 1; max-width: 440px; }
+    .nl-form input { flex: 1; padding: .85rem 1.2rem; border: none; background: rgba(255,255,255,.35); font-family: var(--sans); font-size: .82rem; color: var(--ink); outline: none; }
+    .nl-form input::placeholder { color: rgba(28,23,18,.55); }
+    .nl-form button { background: var(--ink); color: var(--cream); border: none; padding: .85rem 1.6rem; font-family: var(--sans); font-size: .62rem; font-weight: 500; letter-spacing: .18em; text-transform: uppercase; cursor: pointer; transition: background .2s; white-space: nowrap; }
+    .nl-form button:hover { background: var(--warm); }
+
+    /* ── ADMIN PANEL ─────────────────────────────────── */
+    .admin-backdrop { position: fixed; inset: 0; background: rgba(18,14,10,.75); z-index: 200; backdrop-filter: blur(4px); }
+    .admin-modal {
+      position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      z-index: 201; background: var(--cream); width: min(680px, 95vw);
+      max-height: 90vh; overflow-y: auto; box-shadow: 0 32px 80px rgba(0,0,0,.35);
+    }
+    .admin-top { background: var(--warm); padding: 1.4rem 2rem; display: flex; align-items: center; justify-content: space-between; }
+    .admin-top h3 { font-family: var(--serif); font-size: 1.3rem; font-weight: 400; color: var(--cream); letter-spacing: .1em; }
+    .admin-top-meta { font-size: .62rem; letter-spacing: .18em; text-transform: uppercase; color: var(--gold-light); }
+    .admin-close { background: none; border: 1px solid rgba(196,151,58,.3); color: var(--gold-light); width: 32px; height: 32px; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; transition: all .2s; }
+    .admin-close:hover { background: var(--gold); color: var(--ink); border-color: var(--gold); }
+    .admin-body { padding: 2rem; }
+    .admin-section-title { font-size: .62rem; letter-spacing: .28em; text-transform: uppercase; color: var(--gold); margin-bottom: 1.4rem; padding-bottom: .6rem; border-bottom: 1px solid var(--border); }
+    .admin-field { display: flex; flex-direction: column; gap: .4rem; margin-bottom: 1.2rem; }
+    .admin-field label { font-size: .65rem; font-weight: 500; letter-spacing: .15em; text-transform: uppercase; color: var(--muted); }
+    .admin-field input, .admin-field select, .admin-field textarea {
+      font-family: var(--sans); font-size: .85rem; color: var(--ink);
+      border: 1px solid rgba(28,23,18,.18); background: #fff;
+      padding: .75rem 1rem; outline: none; transition: border-color .2s;
+    }
+    .admin-field input:focus, .admin-field select:focus, .admin-field textarea:focus { border-color: var(--gold); }
+    .admin-field textarea { min-height: 80px; resize: vertical; }
+    .admin-field small { font-size: .68rem; color: var(--muted); }
+    .admin-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .admin-check { display: flex; align-items: center; gap: .7rem; margin-bottom: 1.4rem; }
+    .admin-check input { width: 16px; height: 16px; accent-color: var(--gold); cursor: pointer; }
+    .admin-check label { font-size: .8rem; color: var(--muted); cursor: pointer; }
+    .admin-submit { width: 100%; background: var(--gold); color: var(--ink); border: none; padding: 1rem; font-family: var(--sans); font-size: .7rem; font-weight: 500; letter-spacing: .22em; text-transform: uppercase; cursor: pointer; transition: background .2s; margin-top: .4rem; }
+    .admin-submit:hover { background: #a37d2e; color: var(--cream); }
+    .admin-divider { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+    .admin-stock-list { display: flex; flex-direction: column; gap: .7rem; }
+    .admin-stock-item { display: flex; align-items: center; gap: 1rem; padding: .8rem 1rem; border: 1px solid var(--border); background: #fff; }
+    .admin-stock-thumb { width: 48px; height: 48px; object-fit: cover; flex-shrink: 0; background: #eee; }
+    .admin-stock-info { flex: 1; min-width: 0; }
+    .admin-stock-name { font-size: .82rem; font-weight: 500; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .admin-stock-meta { font-size: .68rem; color: var(--muted); margin-top: .15rem; }
+    .admin-sold-toggle { font-size: .6rem; letter-spacing: .14em; text-transform: uppercase; border: 1px solid var(--border); background: none; padding: .35rem .7rem; cursor: pointer; color: var(--muted); transition: all .2s; white-space: nowrap; }
+    .admin-sold-toggle.is-sold { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+    .admin-del { width: 30px; height: 30px; border: 1px solid rgba(180,60,60,.3); background: none; color: #b43c3c; cursor: pointer; font-size: .9rem; display: flex; align-items: center; justify-content: center; transition: all .2s; flex-shrink: 0; }
+    .admin-del:hover { background: #b43c3c; color: #fff; border-color: #b43c3c; }
+    .admin-empty { font-size: .8rem; color: var(--muted); text-align: center; padding: 1.5rem; border: 1px dashed var(--border); }
+    .admin-success { background: #e8f5e2; border: 1px solid #7cba5c; color: #3a6b28; padding: .8rem 1rem; font-size: .78rem; margin-bottom: 1rem; display: none; }
+
+    /* ── REVEAL ──────────────────────────────────────── */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity .75s ease, transform .75s ease; }
+    .reveal.up { opacity: 1; transform: none; }
+
+    /* ── RESPONSIVE ──────────────────────────────────── */
+    @media (max-width: 1200px) {
+      .products-grid { grid-template-columns: repeat(3, 1fr); }
+      .col-grid { grid-template-columns: 1fr 1fr; grid-template-rows: 300px 300px; }
+      .col-card.tall { grid-row: span 2; }
+    }
+    @media (max-width: 1024px) {
+      nav { padding: 1.2rem 2.5rem; }
+      nav.scrolled { padding: .9rem 2.5rem; }
+      #hero { grid-template-columns: 1fr; }
+      .hero-right { height: 55vh; }
+      .hero-left { padding: 8rem 3rem 4rem; }
+      #collections, #shop, #reviews, #instagram { padding: 5rem 3rem; }
+      .footer-inner { grid-template-columns: 1fr 1fr; gap: 3rem; }
+      .nl-bar { flex-direction: column; padding: 2.5rem 3rem; text-align: center; }
+      .nl-form { max-width: 100%; width: 100%; }
+    }
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links, .nav-order { display: none; }
+      .hamburger { display: flex; }
+      #hero { grid-template-columns: 1fr; }
+      .hero-left { padding: 7rem 1.5rem 3rem; }
+      .hero-right { height: 60vw; }
+      .col-grid { grid-template-columns: 1fr 1fr; grid-template-rows: 220px 220px; }
+      .col-card.tall { grid-row: span 2; }
+      #collections, #shop, #reviews, #instagram { padding: 4rem 1.5rem; }
+      .products-grid { grid-template-columns: repeat(2, 1fr); gap: 1.2rem; }
+      .rev-grid { grid-template-columns: 1fr; }
+      .ig-row { grid-template-columns: repeat(3, 1fr); }
+      .footer-inner { grid-template-columns: 1fr; gap: 2.5rem; padding-bottom: 2.5rem; }
+      footer { padding: 3.5rem 1.5rem 2rem; }
+      .footer-bottom { flex-direction: column; gap: .7rem; text-align: center; }
+      .nl-bar { padding: 2.5rem 1.5rem; }
+      .col-head { flex-direction: column; gap: 1.2rem; align-items: flex-start; }
+    }
+    @media (max-width: 480px) {
+      .products-grid { grid-template-columns: repeat(2, 1fr); gap: .9rem; }
+      .hero-nums { gap: 2rem; }
+      .hero-btns { flex-direction: column; align-items: flex-start; }
+      .col-grid { grid-template-columns: 1fr; grid-template-rows: auto; }
+      .col-card.tall { grid-row: span 1; }
+      .col-card { height: 240px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ADMIN PANEL -->
+<div id="adminBackdrop" class="admin-backdrop" style="display:none" onclick="closeAdmin()"></div>
+<div id="adminModal" class="admin-modal" style="display:none">
+  <div class="admin-top">
+    <div>
+      <h3>Stock Manager</h3>
+      <div class="admin-top-meta">Elona Jewelry · Admin</div>
+    </div>
+    <button class="admin-close" onclick="closeAdmin()">✕</button>
+  </div>
+  <div class="admin-body">
+
+    <!-- Add new product -->
+    <div class="admin-section-title">✦ &nbsp;Add New Earrings to Collection</div>
+    <div id="adminSuccess" class="admin-success">✓ &nbsp;Product added successfully! Visible in the shop grid.</div>
+    <form onsubmit="adminAddProduct(event)">
+      <div class="admin-field">
+        <label>Image Filename</label>
+        <input type="text" id="f-img" placeholder="e.g. new-rose-drops.jpeg" required />
+        <small>Save the photo in the elona-jewelry folder first, then type the exact filename here.</small>
+      </div>
+      <div class="admin-field">
+        <label>Product Name</label>
+        <input type="text" id="f-name" placeholder="e.g. Rose Gold Floral Drop Earrings" required />
+      </div>
+      <div class="admin-row">
+        <div class="admin-field">
+          <label>Category</label>
+          <select id="f-cat">
+            <option>Crystal Cluster</option>
+            <option>Bold Daisy</option>
+            <option>Delicate Daisy</option>
+            <option>3D Sculpted Blooms</option>
+            <option>Puff &amp; Fabric</option>
+            <option>Floral Drops</option>
+            <option>Petal &amp; Leaf</option>
+            <option>Statement</option>
+          </select>
+        </div>
+        <div class="admin-field">
+          <label>Price (KSH)</label>
+          <select id="f-price">
+            <option value="300">KSH 300</option>
+            <option value="400" selected>KSH 400</option>
+            <option value="500">KSH 500</option>
+            <option value="600">KSH 600</option>
+          </select>
+        </div>
+      </div>
+      <div class="admin-field">
+        <label>Description</label>
+        <textarea id="f-desc" placeholder="Brief description of the earrings..." required></textarea>
+      </div>
+      <div class="admin-check">
+        <input type="checkbox" id="f-sold" />
+        <label for="f-sold">Mark as Sold Out</label>
+      </div>
+      <button type="submit" class="admin-submit">Add to Collection →</button>
+    </form>
+
+    <hr class="admin-divider" />
+
+    <!-- Manage existing locally-added stock -->
+    <div class="admin-section-title">✦ &nbsp;Manage Added Stock</div>
+    <div id="adminStockList" class="admin-stock-list"></div>
+
+  </div>
+</div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="nav-logo">Elona <em>✦</em> Jewelry</a>
+  <ul class="nav-links">
+    <li><a href="#collections">Collections</a></li>
+    <li><a href="#shop">Shop All</a></li>
+    <li><a href="#reviews">Reviews</a></li>
+    <li><a href="#instagram">Instagram</a></li>
+  </ul>
+  <a href="https://www.instagram.com/_elona.jewelry/" target="_blank" class="nav-order">Order via DM</a>
+  <button class="hamburger" onclick="toggleNav()" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-left reveal">
+    <p class="hero-tag">Fashion Earrings Collection</p>
+    <h1 class="hero-h1">Wear What<br/>Makes You <i>Feel</i><br/>Beautiful</h1>
+    <p class="hero-sub">Hand-curated earrings for every mood — from bold crystal clusters to romantic floral drops. Find your signature piece.</p>
+    <div class="hero-btns">
+      <a href="#shop" class="btn-gold">Shop the Collection</a>
+      <a href="#collections" class="btn-ghost">View Collections</a>
+    </div>
+    <div class="hero-nums">
+      <div><div class="hero-num-val">46+</div><div class="hero-num-label">Unique Styles</div></div>
+      <div><div class="hero-num-val">7</div><div class="hero-num-label">Collections</div></div>
+      <div><div class="hero-num-val">★ 5.0</div><div class="hero-num-label">Customer Rating</div></div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-mosaic">
+      <img class="span2" src="WhatsApp Image 2026-04-28 at 13.13.30 (1).jpeg" alt="Pink Floral Drops" />
+      <img src="WhatsApp Image 2026-04-28 at 13.13.29 (1).jpeg" alt="Crystal Studs" />
+      <img src="WhatsApp Image 2026-04-28 at 13.13.38 (3).jpeg" alt="Pink Petal Puff" />
+    </div>
+    <div class="hero-badge">
+      "Designed to turn heads<br/>every single day."
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-track">
+    <div class="ticker-item"><span>Crystal Cluster</span><em>✦</em><span>Floral Drops</span><em>✦</em><span>Daisy Studs</span><em>✦</em><span>Puff Flowers</span><em>✦</em><span>Ginkgo Leaf</span><em>✦</em><span>Statement Drops</span><em>✦</em><span>Elona Jewelry</span><em>✦</em></div>
+    <div class="ticker-item"><span>Crystal Cluster</span><em>✦</em><span>Floral Drops</span><em>✦</em><span>Daisy Studs</span><em>✦</em><span>Puff Flowers</span><em>✦</em><span>Ginkgo Leaf</span><em>✦</em><span>Statement Drops</span><em>✦</em><span>Elona Jewelry</span><em>✦</em></div>
+  </div>
+</div>
+
+<!-- VIEW COLLECTIONS -->
+<section id="collections">
+  <div class="col-head">
+    <div class="reveal">
+      <p class="s-tag">Our Collections</p>
+      <h2 class="s-title" style="color:var(--cream);margin-top:.7rem">View <i>Collections</i></h2>
+    </div>
+    <a href="#shop" class="see-all">Shop All →</a>
+  </div>
+  <div class="col-grid">
+    <!-- Tall feature card -->
+    <div class="col-card tall reveal">
+      <img src="WhatsApp Image 2026-04-28 at 13.13.34 (2).jpeg" alt="3D Flower Studs" />
+      <div class="col-overlay">
+        <div class="col-label">3D Sculptured Blooms</div>
+        <div class="col-sub">Petal · Velvet · Organza · 15+ styles</div>
+      </div>
+      <div class="col-arrow">→</div>
+    </div>
+    <!-- Row 1 -->
+    <div class="col-card reveal">
+      <img src="WhatsApp Image 2026-04-28 at 13.13.32 (2).jpeg" alt="Bold Daisy Studs" />
+      <div class="col-overlay">
+        <div class="col-label">Bold Daisy Studs</div>
+        <div class="col-sub">Enamel · Gold centre · 6 colours</div>
+      </div>
+      <div class="col-arrow">→</div>
+    </div>
+    <div class="col-card reveal">
+      <img src="WhatsApp Image 2026-04-28 at 13.13.29 (1).jpeg" alt="Crystal Cluster" />
+      <div class="col-overlay">
+        <div class="col-label">Crystal Cluster</div>
+        <div class="col-sub">Iridescent · Rainbow · Gemstone</div>
+      </div>
+      <div class="col-arrow">→</div>
+    </div>
+    <!-- Row 2 -->
+    <div class="col-card reveal">
+      <img src="WhatsApp Image 2026-04-28 at 13.13.30 (1).jpeg" alt="Floral Drops" />
+      <div class="col-overlay">
+        <div class="col-label">Floral Drop Earrings</div>
+        <div class="col-sub">Cascading · Dangle · Chain</div>
+      </div>
+      <div class="col-arrow">→</div>
+    </div>
+    <div class="col-card reveal">
+      <img src="WhatsApp Image 2026-04-28 at 13.13.41 (1).jpeg" alt="Statement Drops" />
+      <div class="col-overlay">
+        <div class="col-label">Statement & Chain Drops</div>
+        <div class="col-sub">Tassels · Cameos · Chains</div>
+      </div>
+      <div class="col-arrow">→</div>
+    </div>
+  </div>
+</section>
+
+<!-- SHOP ALL -->
+<section id="shop">
+  <div class="shop-head reveal">
+    <p class="s-tag">Full Collection</p>
+    <h2 class="s-title" style="margin-top:.7rem">Shop <i>All Earrings</i></h2>
+    <div class="rule"></div>
+  </div>
+  <div class="products-grid" id="productGrid"></div>
+</section>
+
+<!-- REVIEWS -->
+<section id="reviews">
+  <div class="rev-head reveal">
+    <p class="s-tag">Customer Love</p>
+    <h2 class="s-title" style="margin-top:.7rem">What They're <i>Saying</i></h2>
+    <div class="rule"></div>
+  </div>
+  <div class="rev-grid">
+
+    <!-- Review 1 — "I got it they are pretty" -->
+    <div class="rev-card reveal">
+      <div class="rev-card-header">
+        <div class="rev-avatar av-a">T</div>
+        <div class="rev-header-text">
+          <div class="rev-name">Thandeka M.</div>
+          <div class="rev-meta">Customer · WhatsApp</div>
+        </div>
+        <span class="rev-wa-icon">💬</span>
+      </div>
+      <div class="rev-body">
+        <div class="rev-bubble">
+          <p>I got it they are pretty 🥰😍</p>
+          <span class="ts">✓✓</span>
+        </div>
+        <div class="rev-bubble">
+          <p>I love the packaging more 😄😄</p>
+          <span class="ts">✓✓</span>
+        </div>
+        <div class="rev-img-bubble">
+          <img src="WhatsApp Image 2026-04-28 at 13.13.41 (1).jpeg" alt="Beautiful packaging" />
+        </div>
+        <div class="rev-bubble">
+          <p>Thanks again for your services 😍 i just love them saana</p>
+          <span class="ts">✓✓</span>
+        </div>
+      </div>
+      <div class="rev-stars-row"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+      <div class="rev-verified-bar">✦ &nbsp; Verified Customer Review</div>
+    </div>
+
+    <!-- Review 2 — "Hey sasa thankyouuu" -->
+    <div class="rev-card reveal">
+      <div class="rev-card-header">
+        <div class="rev-avatar av-b">N</div>
+        <div class="rev-header-text">
+          <div class="rev-name">Nomvula S.</div>
+          <div class="rev-meta">Customer · WhatsApp</div>
+        </div>
+        <span class="rev-wa-icon">💬</span>
+      </div>
+      <div class="rev-body">
+        <div class="rev-bubble">
+          <p>Hey sasa thankyouuu so much I'm really grateful for the package 🤗 legit</p>
+          <span class="ts">19:27 &nbsp;✓✓</span>
+        </div>
+      </div>
+      <div class="rev-stars-row"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+      <div class="rev-verified-bar">✦ &nbsp; Verified Customer Review</div>
+    </div>
+
+    <!-- Review 3 — brand quote card -->
+    <div class="rev-card reveal" style="background:var(--warm);border-radius:4px;overflow:hidden;">
+      <div style="padding:2.5rem 2rem;flex:1;display:flex;flex-direction:column;justify-content:space-between;gap:2rem;">
+        <div>
+          <div style="font-family:var(--serif);font-size:4rem;color:var(--gold);line-height:.8;opacity:.4;">"</div>
+          <p style="font-family:var(--serif);font-size:1.15rem;font-style:italic;color:var(--cream);line-height:1.8;margin-top:1rem;">Every order is packed with love and care — because you deserve more than just earrings. You deserve an experience.</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:1rem;padding-top:1.5rem;border-top:1px solid rgba(196,151,58,.2);">
+          <div style="width:38px;height:38px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-family:var(--serif);color:var(--ink);font-size:1rem;font-weight:600;">E</div>
+          <div>
+            <div style="font-size:.78rem;font-weight:500;color:var(--cream);letter-spacing:.04em;">Elona Jewelry</div>
+            <div style="font-size:.62rem;color:var(--gold-light);margin-top:.1rem;">@_elona.jewelry</div>
+          </div>
+        </div>
+      </div>
+      <div style="background:var(--gold);padding:.6rem 1rem;font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink);">✦ &nbsp; Our Promise to Every Customer</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- INSTAGRAM -->
+<section id="instagram">
+  <div class="insta-top">
+    <div class="reveal">
+      <p class="s-tag" style="color:var(--gold)">Follow Our World</p>
+      <h2 class="s-title" style="color:var(--cream);margin-top:.7rem">On <i>Instagram</i></h2>
+    </div>
+    <a href="https://www.instagram.com/_elona.jewelry/" target="_blank" class="insta-handle reveal">
+      ✦ &nbsp;@_elona.jewelry
+    </a>
+  </div>
+  <div class="ig-row reveal">
+    <div class="ig-cell"><img src="WhatsApp Image 2026-04-28 at 13.13.33 (2).jpeg" alt="" /><div class="ig-over"><span>View Post</span></div></div>
+    <div class="ig-cell"><img src="WhatsApp Image 2026-04-28 at 13.13.35.jpeg" alt="" /><div class="ig-over"><span>View Post</span></div></div>
+    <div class="ig-cell"><img src="WhatsApp Image 2026-04-28 at 13.13.36 (2).jpeg" alt="" /><div class="ig-over"><span>View Post</span></div></div>
+    <div class="ig-cell"><img src="WhatsApp Image 2026-04-28 at 13.13.37 (2).jpeg" alt="" /><div class="ig-over"><span>View Post</span></div></div>
+    <div class="ig-cell"><img src="WhatsApp Image 2026-04-28 at 13.13.39 (1).jpeg" alt="" /><div class="ig-over"><span>View Post</span></div></div>
+    <div class="ig-cell"><img src="WhatsApp Image 2026-04-28 at 13.13.41 (1).jpeg" alt="" /><div class="ig-over"><span>View Post</span></div></div>
+  </div>
+  <div class="insta-cta reveal">
+    <a href="https://www.instagram.com/_elona.jewelry/" target="_blank" class="btn-outline-gold">Follow &amp; DM to Order</a>
+  </div>
+</section>
+
+<!-- NEWSLETTER BAR -->
+<div class="nl-bar">
+  <p class="nl-text">New arrivals dropping soon — be the first to know</p>
+  <form class="nl-form" onsubmit="handleSub(event)">
+    <input type="email" placeholder="Your email address" required />
+    <button type="submit">Subscribe</button>
+  </form>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand-logo">Elona <em>✦</em> Jewelry</div>
+      <p>Curated fashion earrings for every style and every occasion. Countrywide delivery via Pickup Mtaani &amp; various transport options.</p>
+      <div class="footer-social">
+        <a href="https://www.instagram.com/_elona.jewelry/" target="_blank" class="soc" title="Instagram">📸</a>
+        <a href="https://www.tiktok.com/@_elona.jewelry" target="_blank" class="soc" title="TikTok">🎵</a>
+        <a href="mailto:jewelryelona@gmail.com" class="soc" title="Email">✉</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h5>Explore</h5>
+      <ul>
+        <li><a href="#collections">View Collections</a></li>
+        <li><a href="#shop">Shop All Earrings</a></li>
+        <li><a href="#reviews">Customer Reviews</a></li>
+        <li><a href="#instagram">Instagram</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Contact &amp; Order</h5>
+      <ul>
+        <li><a href="https://www.instagram.com/_elona.jewelry/" target="_blank">📸 &nbsp;@_elona.jewelry</a></li>
+        <li><a href="https://www.tiktok.com/@_elona.jewelry" target="_blank">🎵 &nbsp;@_elona.jewelry</a></li>
+        <li><a href="tel:+254700309298">📞 &nbsp;+254 700 309 298</a></li>
+        <li><a href="mailto:jewelryelona@gmail.com">✉ &nbsp;jewelryelona@gmail.com</a></li>
+      </ul>
+      <div style="margin-top:1.4rem;padding:1rem;border:1px solid rgba(196,151,58,.15);background:rgba(196,151,58,.05);">
+        <div style="font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-light);margin-bottom:.5rem;">🚚 &nbsp;Delivery</div>
+        <div style="font-size:.75rem;color:rgba(232,213,163,.5);line-height:1.75;">Countrywide delivery available via <strong style="color:rgba(232,213,163,.7);">Pickup Mtaani</strong> and various transport options. DM us to arrange.</div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 Elona Jewelry. All rights reserved.</span>
+    <span><a href="mailto:jewelryelona@gmail.com">jewelryelona@gmail.com</a> &nbsp;·&nbsp; <a href="tel:+254700309298">+254 700 309 298</a></span>
+    <button onclick="openAdmin()" style="background:none;border:none;color:rgba(196,151,58,.25);font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:color .2s;font-family:var(--sans);" onmouseover="this.style.color='rgba(196,151,58,.7)'" onmouseout="this.style.color='rgba(196,151,58,.25)'">✦ Admin</button>
+  </div>
+</footer>
+
+<script>
+  /* Products ─────────────────────────────────────────── */
+  /* To mark an item sold out: set soldOut: true          */
+  const products = [
+    // ── Crystal Cluster (KSH 300) ──────────────────────
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.29 (1).jpeg', name: 'Rainbow Prism Cluster Studs',      cat: 'Crystal Cluster', price: 300, soldOut: false, desc: 'Multi-faceted iridescent geometric crystals bursting with rainbow colour.' },
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.29.jpeg',     name: 'Emerald Crystal Cluster Studs',    cat: 'Crystal Cluster', price: 300, soldOut: false, desc: 'Rich emerald-green faceted crystals in a luxurious cluster with stunning depth.' },
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.30.jpeg',     name: 'Lavender Aurora Cluster Studs',    cat: 'Crystal Cluster', price: 300, soldOut: false, desc: 'Dreamy lavender and opalescent white cube crystals with a soft iridescent shimmer.' },
+    // ── Bold Daisy (KSH 400) ───────────────────────────
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.32 (1).jpeg', name: 'White Sunflower Daisy Studs',      cat: 'Bold Daisy', price: 400, soldOut: false, desc: 'Crisp white porcelain-look petals with a textured gold sunflower centre.' },
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.32 (2).jpeg', name: 'Coral Gerbera Daisy Studs',        cat: 'Bold Daisy', price: 400, soldOut: false, desc: 'Vibrant coral-pink layered petals with a gilded beaded centre.' },
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.32 (3).jpeg', name: 'Blush Pearlescent Daisy Studs',    cat: 'Bold Daisy', price: 400, soldOut: false, desc: 'Soft blush-pink semi-translucent petals with a gold beaded centre.' },
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.32.jpeg',     name: 'Crimson Petal Daisy Studs',        cat: 'Bold Daisy', price: 400, soldOut: false, desc: 'Bold glossy red petals with a gold circular centre. Striking and unforgettable.' },
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.33.jpeg',     name: 'Ruby Red Gerbera Studs',           cat: 'Bold Daisy', price: 400, soldOut: false, desc: 'Rich deep red multi-layered petals with a glittering gold beaded centre.' },
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.33 (2).jpeg', name: 'Emerald Gerbera Daisy Studs',      cat: 'Bold Daisy', price: 400, soldOut: false, desc: 'Lush emerald-green layered petals with a textured gold centre.' },
+    // ── Delicate Daisy (KSH 300) ──────────────────────
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.31 (1).jpeg', name: 'Pink Pearl Daisy Studs',           cat: 'Delicate Daisy', price: 300, soldOut: false, desc: 'Sweet pink enamel petals with gold trim and a single pearl centre.' },
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.31 (2).jpeg', name: 'Ivory Pearl Daisy Studs',          cat: 'Delicate Daisy', price: 300, soldOut: false, desc: 'Elegant cream enamel petals with gold trim and pearl centre.' },
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.31.jpeg',     name: 'Midnight Pearl Daisy Studs',       cat: 'Delicate Daisy', price: 300, soldOut: false, desc: 'Sophisticated black enamel petals with gold trim and pearl centre.' },
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.39 (2).jpeg', name: 'Silver Filigree Pearl Daisy',      cat: 'Delicate Daisy', price: 300, soldOut: false, desc: 'Intricately etched silver wire-work petals with a lustrous pearl centre.' },
+    // ── 3D Sculpted Blooms (KSH 300) ──────────────────
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.34 (1).jpeg', name: 'Blush 3D Sculpted Flower Studs',   cat: '3D Sculpted Blooms', price: 300, soldOut: false, desc: 'Dimensional blush-pink flower petals with a cluster of pearl centres.' },
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.34 (2).jpeg', name: 'Sunshine Yellow 3D Flower Studs',  cat: '3D Sculpted Blooms', price: 300, soldOut: false, desc: 'Cheerful yellow sculpted petals with a pearl cluster centre.' },
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.34 (3).jpeg', name: 'Amethyst 3D Flower Studs',         cat: '3D Sculpted Blooms', price: 300, soldOut: false, desc: 'Rich purple sculpted flower with a pearl cluster centre. Lush and luxurious.' },
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.34.jpeg',     name: 'Onyx 3D Flower Studs',             cat: '3D Sculpted Blooms', price: 300, soldOut: false, desc: 'Sleek black sculpted flower with pearl cluster centre. Edgy yet romantic.' },
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.35.jpeg',     name: 'Tangerine 3D Bloom Studs',         cat: '3D Sculpted Blooms', price: 300, soldOut: false, desc: 'Vibrant tangerine-orange sculpted flower with a 5-pearl cluster centre.' },
+    // ── Puff & Fabric (KSH 400) ───────────────────────
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.30 (3).jpeg', name: 'Black Organza Puff Studs',         cat: 'Puff & Fabric', price: 400, soldOut: false, desc: 'Large fluffy black organza and tulle flower with a glittering beaded centre.' },
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.33 (1).jpeg', name: 'Black Velvet Bloom Studs',         cat: 'Puff & Fabric', price: 400, soldOut: false, desc: 'Plush black velvet petals with an ornate gold stamen centre.' },
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.33 (3).jpeg', name: 'Burgundy Velvet Bloom Studs',      cat: 'Puff & Fabric', price: 400, soldOut: false, desc: 'Deep wine-red velvet petals with a golden stamen. Rich and romantic.' },
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.35 (1).jpeg', name: 'White Lace Petal Cluster Studs',   cat: 'Puff & Fabric', price: 400, soldOut: false, desc: 'Intricately textured white lace-like petals forming a dreamy cluster.' },
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.35 (2).jpeg', name: 'Red Lace Petal Cluster Studs',     cat: 'Puff & Fabric', price: 400, soldOut: false, desc: 'Richly textured crimson petal clusters. Bold, romantic, and full of depth.' },
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.35 (3).jpeg', name: 'Blush Lace Petal Cluster Studs',   cat: 'Puff & Fabric', price: 400, soldOut: false, desc: 'Soft pink textured petal clusters with a delicate feminine finish.' },
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.38 (1).jpeg', name: 'White Petal Puff Studs',           cat: 'Puff & Fabric', price: 400, soldOut: false, desc: 'Translucent white layered petals forming a full, cloud-like flower.' },
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.38 (2).jpeg', name: 'Lime Green Petal Puff Studs',      cat: 'Puff & Fabric', price: 400, soldOut: false, desc: 'Fresh lime-green translucent petals in a lush rounded cluster.' },
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.38 (3).jpeg', name: 'Baby Pink Petal Puff Studs',       cat: 'Puff & Fabric', price: 400, soldOut: false, desc: 'Soft baby-pink translucent petals in a full rounded cluster.' },
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.39.jpeg',     name: 'Lilac Petal Puff Studs',           cat: 'Puff & Fabric', price: 400, soldOut: false, desc: 'Pale lilac translucent petals in a rounded, soft cluster. Ethereal.' },
+    { img: 'earring-lavender-organza-puffs.jpeg',            name: 'Lavender Organza Petal Puffs',     cat: 'Puff & Fabric', price: 400, soldOut: false, desc: 'Dreamy lavender translucent multi-petal cluster studs. Large, airy, and beautifully feminine.' },
+    // ── Floral Drops (KSH 400) ────────────────────────
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.30 (1).jpeg', name: 'Pink Ombré Floral Drops',          cat: 'Floral Drops', price: 400, soldOut: false, desc: 'Three cascading flower charms graduating from blush to hot pink to coral.' },
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.30 (2).jpeg', name: 'Ocean Blue Floral Drops',          cat: 'Floral Drops', price: 400, soldOut: false, desc: 'A beautiful cascade from white to sky blue to cobalt. Fresh and striking.' },
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.40 (3).jpeg', name: 'White & Green Pearl Daisy Drops',  cat: 'Floral Drops', price: 400, soldOut: false, desc: 'Two-tier drop — white pearl daisy connecting to a vivid green daisy.' },
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.41.jpeg',     name: 'Sage Green Asymmetric Chain Drops',cat: 'Floral Drops', price: 400, soldOut: false, desc: 'Mismatched design — one small daisy, one large flower with a long gold chain.' },
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.41 (3).jpeg', name: 'White Petal Heart Drop Earrings',  cat: 'Floral Drops', price: 400, soldOut: false, desc: 'Gold heart stud top with cascading white sculpted petal tiers.' },
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.41 (2).jpeg', name: 'White Rose Pearl Chain Drops',     cat: 'Floral Drops', price: 400, soldOut: false, desc: 'Delicate mother-of-pearl rose stud with twin gold chains ending in pearl teardrops.' },
+    { img: 'earring-olive-green-asymmetric.jpeg',            name: 'Olive Green Asymmetric Chain Drops',cat: 'Floral Drops', price: 400, soldOut: false, desc: 'Asymmetric pair — one small green flower stud, one oversized bloom with a long gold chain tassel.' },
+    // ── Petal & Leaf (KSH 400) ────────────────────────
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.36 (1).jpeg', name: 'Ivory Ginkgo Leaf Studs',          cat: 'Petal & Leaf', price: 400, soldOut: false, desc: 'Two-tiered ivory enamel ginkgo leaf with gold trim. Botanical elegance.' },
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.36 (2).jpeg', name: 'Emerald Ginkgo Leaf Studs',        cat: 'Petal & Leaf', price: 400, soldOut: false, desc: 'Two-tiered emerald green ginkgo leaf with gold rim. Fashion-forward.' },
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.36 (3).jpeg', name: 'Rose Petal Ginkgo Studs',          cat: 'Petal & Leaf', price: 400, soldOut: false, desc: 'Two-tiered rose-red ginkgo leaf with gold trim. Bold nature-meets-fashion.' },
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.36.jpeg',     name: 'Cobalt Ginkgo Leaf Studs',         cat: 'Petal & Leaf', price: 400, soldOut: false, desc: 'Two-tiered cobalt blue ginkgo leaf with gold trim. Strikingly beautiful.' },
+    // ── Statement (KSH 400) ───────────────────────────
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.39 (1).jpeg', name: 'Pearl Square Tassel Drops',        cat: 'Statement', price: 400, soldOut: false, desc: 'Gold-framed mother-of-pearl squares with cascading triple gold chains.' },
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.39 (3).jpeg', name: 'Pink Blossom Halo Studs',          cat: 'Statement', price: 400, soldOut: false, desc: 'Pink enamel flower within a sparkling rhinestone halo ring. Dazzling.' },
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.41 (1).jpeg', name: 'Crystal Bow Tassel Drops',         cat: 'Statement', price: 400, soldOut: false, desc: 'Gold bow with pavé crystals, pearl centre, and long double gold chain tassels.' },
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.37 (1).jpeg', name: 'Silver-Gold Sculptural Studs',     cat: 'Statement', price: 400, soldOut: false, desc: 'Abstract hammered silver and gold metallic studs. Avant-garde modern art.' },
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.37 (2).jpeg', name: 'Teal Butterfly Cameo Studs',       cat: 'Statement', price: 400, soldOut: false, desc: 'Ornate gold-framed oval with teal enamel and raised butterfly. Vintage-inspired.' },
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.37 (3).jpeg', name: 'Lavender Butterfly Cameo Studs',   cat: 'Statement', price: 400, soldOut: false, desc: 'Elaborate gold oval frame with lavender enamel and detailed butterfly motif.' },
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.37.jpeg',     name: 'Crimson Rose Cup Studs',           cat: 'Statement', price: 400, soldOut: false, desc: 'Deep crimson enamel petals cupped around a faceted gold gem. Sculptural.' },
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.40 (1).jpeg', name: 'Ivory Abstract Shell Studs',       cat: 'Statement', price: 400, soldOut: false, desc: 'Organic abstract form in mother-of-pearl with gold edge. Modern minimalist luxury.' },
+    { img: 'WhatsApp Image 2026-04-28 at 13.13.40 (2).jpeg', name: 'Cream Pearl Hoop Earrings',        cat: 'Statement', price: 400, soldOut: false, desc: 'Bold chunky cream pearl-effect hoop with gold clasp. Minimalist and effortlessly chic.' },
+  ];
+
+  /* Render products */
+  const grid = document.getElementById('productGrid');
+  products.forEach((p, i) => {
+    const card = document.createElement('div');
+    card.className = 'p-card reveal' + (p.soldOut ? ' sold' : '');
+    card.innerHTML = `
+      <div class="p-img">
+        <img src="${p.img}" alt="${p.name}" loading="lazy" />
+        ${p.soldOut ? '<div class="sold-overlay"><span class="sold-label">Sold Out</span></div>' : ''}
+        <div class="p-wish" onclick="toggleWish(this)" title="Save">♡</div>
+      </div>
+      <div class="p-cat">${p.cat}</div>
+      <div class="p-name">${p.name}</div>
+      <div class="p-price">KSH ${p.price.toLocaleString()}<span class="ksh">/ pair</span></div>
+      <div class="p-desc">${p.desc}</div>`;
+    grid.appendChild(card);
+  });
+
+  function toggleWish(el) {
+    const on = el.classList.toggle('on');
+    el.textContent = on ? '♥' : '♡';
+  }
+
+  /* ── Admin Panel ──────────────────────────────────────── */
+  const ADMIN_PASS = 'elona2025';
+  const STORAGE_KEY = 'elona_custom_products';
+
+  function getCustomProducts() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch { return []; }
+  }
+
+  function saveCustomProducts(arr) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+  }
+
+  /* Merge custom products into the grid on load */
+  function loadCustomProducts() {
+    const custom = getCustomProducts();
+    custom.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'p-card reveal' + (p.soldOut ? ' sold' : '');
+      card.dataset.customId = p.id;
+      card.innerHTML = `
+        <div class="p-img">
+          <img src="${p.img}" alt="${p.name}" loading="lazy" />
+          ${p.soldOut ? '<div class="sold-overlay"><span class="sold-label">Sold Out</span></div>' : ''}
+          <div class="p-wish" onclick="toggleWish(this)" title="Save">♡</div>
+        </div>
+        <div class="p-cat">${p.cat}</div>
+        <div class="p-name">${p.name}</div>
+        <div class="p-price">KSH ${Number(p.price).toLocaleString()}<span class="ksh">/ pair</span></div>
+        <div class="p-desc">${p.desc}</div>`;
+      grid.appendChild(card);
+      setTimeout(() => card.classList.add('up'), 80);
+    });
+  }
+
+  function openAdmin() {
+    const pass = prompt('Enter admin password:');
+    if (pass === null) return;
+    if (pass !== ADMIN_PASS) { alert('Incorrect password.'); return; }
+    document.getElementById('adminBackdrop').style.display = 'block';
+    document.getElementById('adminModal').style.display = 'block';
+    document.body.style.overflow = 'hidden';
+    renderAdminList();
+  }
+
+  function closeAdmin() {
+    document.getElementById('adminBackdrop').style.display = 'none';
+    document.getElementById('adminModal').style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  function adminAddProduct(e) {
+    e.preventDefault();
+    const p = {
+      id: Date.now(),
+      img:     document.getElementById('f-img').value.trim(),
+      name:    document.getElementById('f-name').value.trim(),
+      cat:     document.getElementById('f-cat').value,
+      price:   Number(document.getElementById('f-price').value),
+      desc:    document.getElementById('f-desc').value.trim(),
+      soldOut: document.getElementById('f-sold').checked,
+    };
+    const custom = getCustomProducts();
+    custom.push(p);
+    saveCustomProducts(custom);
+
+    /* Add card to live grid */
+    const card = document.createElement('div');
+    card.className = 'p-card reveal' + (p.soldOut ? ' sold' : '');
+    card.dataset.customId = p.id;
+    card.innerHTML = `
+      <div class="p-img">
+        <img src="${p.img}" alt="${p.name}" loading="lazy" />
+        ${p.soldOut ? '<div class="sold-overlay"><span class="sold-label">Sold Out</span></div>' : ''}
+        <div class="p-wish" onclick="toggleWish(this)" title="Save">♡</div>
+      </div>
+      <div class="p-cat">${p.cat}</div>
+      <div class="p-name">${p.name}</div>
+      <div class="p-price">KSH ${p.price.toLocaleString()}<span class="ksh">/ pair</span></div>
+      <div class="p-desc">${p.desc}</div>`;
+    grid.appendChild(card);
+    setTimeout(() => card.classList.add('up'), 80);
+
+    /* Reset form */
+    e.target.reset();
+    const msg = document.getElementById('adminSuccess');
+    msg.style.display = 'block';
+    setTimeout(() => msg.style.display = 'none', 3500);
+    renderAdminList();
+  }
+
+  function adminToggleSold(id) {
+    const custom = getCustomProducts();
+    const p = custom.find(x => x.id === id);
+    if (!p) return;
+    p.soldOut = !p.soldOut;
+    saveCustomProducts(custom);
+    /* Update live card */
+    const card = document.querySelector(`[data-custom-id="${id}"]`);
+    if (card) {
+      card.classList.toggle('sold', p.soldOut);
+      const existing = card.querySelector('.sold-overlay');
+      if (p.soldOut && !existing) {
+        const ov = document.createElement('div');
+        ov.className = 'sold-overlay';
+        ov.innerHTML = '<span class="sold-label">Sold Out</span>';
+        card.querySelector('.p-img').appendChild(ov);
+      } else if (!p.soldOut && existing) {
+        existing.remove();
+      }
+    }
+    renderAdminList();
+  }
+
+  function adminDeleteProduct(id) {
+    if (!confirm('Remove this product from the website?')) return;
+    let custom = getCustomProducts();
+    custom = custom.filter(x => x.id !== id);
+    saveCustomProducts(custom);
+    const card = document.querySelector(`[data-custom-id="${id}"]`);
+    if (card) card.remove();
+    renderAdminList();
+  }
+
+  function renderAdminList() {
+    const custom = getCustomProducts();
+    const list = document.getElementById('adminStockList');
+    if (!custom.length) {
+      list.innerHTML = '<div class="admin-empty">No custom stock added yet. Use the form above to add new products.</div>';
+      return;
+    }
+    list.innerHTML = custom.map(p => `
+      <div class="admin-stock-item">
+        <img class="admin-stock-thumb" src="${p.img}" alt="${p.name}" onerror="this.style.background='#ddd'" />
+        <div class="admin-stock-info">
+          <div class="admin-stock-name">${p.name}</div>
+          <div class="admin-stock-meta">${p.cat} &nbsp;·&nbsp; KSH ${Number(p.price).toLocaleString()} &nbsp;·&nbsp; ${p.soldOut ? '<strong>Sold Out</strong>' : 'In Stock'}</div>
+        </div>
+        <button class="admin-sold-toggle ${p.soldOut ? 'is-sold' : ''}" onclick="adminToggleSold(${p.id})">
+          ${p.soldOut ? 'Mark In Stock' : 'Mark Sold Out'}
+        </button>
+        <button class="admin-del" onclick="adminDeleteProduct(${p.id})" title="Remove">✕</button>
+      </div>`).join('');
+  }
+
+  /* Load any previously saved custom products */
+  loadCustomProducts();
+
+  /* Scroll reveal */
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e, idx) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('up'), idx * 55);
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.07 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  /* Navbar scroll shrink */
+  const navEl = document.getElementById('nav');
+  window.addEventListener('scroll', () => navEl.classList.toggle('scrolled', scrollY > 60));
+
+  /* Newsletter */
+  function handleSub(e) {
+    e.preventDefault();
+    const btn = e.target.querySelector('button');
+    btn.textContent = 'Subscribed ✦';
+    e.target.querySelector('input').value = '';
+    setTimeout(() => btn.textContent = 'Subscribe', 3000);
+  }
+
+  /* Mobile nav */
+  function toggleNav() {
+    const ul = document.querySelector('.nav-links');
+    const open = ul.style.display === 'flex';
+    ul.style.cssText = open ? '' : 'display:flex;flex-direction:column;position:absolute;top:100%;left:0;right:0;background:var(--cream);padding:1.5rem 2rem;gap:1.2rem;border-bottom:1px solid var(--border);z-index:99;';
+  }
+</script>
+</body>
+</html>
