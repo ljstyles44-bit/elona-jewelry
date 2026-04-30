@@ -760,61 +760,64 @@
     { img: 'Cream Pearl Hoop Earrings.jpeg',          name: 'Cream Pearl Hoop Earrings',         cat: 'Statement',          price: 400, soldOut: false, desc: 'Bold chunky cream pearl-effect hoop with gold clasp. Minimalist and effortlessly chic.' },
   ];
 
-  /* Render products */
-  const grid = document.getElementById('productGrid');
-  products.forEach((p, i) => {
+  /* ── Storage keys ───────────────────────────────────────── */
+  const ADMIN_PASS    = 'elona2025';
+  const CUSTOM_KEY    = 'elona_custom_products';   // new products added via admin
+  const SOLDOUT_KEY   = 'elona_soldout_map';        // soldOut state for ALL products (keyed by name)
+
+  function getSoldOutMap()  { try { return JSON.parse(localStorage.getItem(SOLDOUT_KEY))  || {}; } catch { return {}; } }
+  function saveSoldOutMap(m){ localStorage.setItem(SOLDOUT_KEY, JSON.stringify(m)); }
+  function getCustomProducts()    { try { return JSON.parse(localStorage.getItem(CUSTOM_KEY)) || []; } catch { return []; } }
+  function saveCustomProducts(arr){ localStorage.setItem(CUSTOM_KEY, JSON.stringify(arr)); }
+
+  /* ── Build a card element ────────────────────────────────── */
+  function makeCard(p, isSold, dataset) {
     const card = document.createElement('div');
-    card.className = 'p-card reveal' + (p.soldOut ? ' sold' : '');
+    card.className = 'p-card reveal' + (isSold ? ' sold' : '');
+    if (dataset) Object.entries(dataset).forEach(([k,v]) => card.dataset[k] = v);
     card.innerHTML = `
       <div class="p-img">
         <img src="${p.img}" alt="${p.name}" loading="lazy" />
-        ${p.soldOut ? '<div class="sold-overlay"><span class="sold-label">Sold Out</span></div>' : ''}
+        ${isSold ? '<div class="sold-overlay"><span class="sold-label">Sold Out</span></div>' : ''}
         <div class="p-wish" onclick="toggleWish(this)" title="Save">♡</div>
       </div>
       <div class="p-cat">${p.cat}</div>
       <div class="p-name">${p.name}</div>
-      <div class="p-price">KSH ${p.price.toLocaleString()}<span class="ksh">/ pair</span></div>
+      <div class="p-price">KSH ${Number(p.price).toLocaleString()}<span class="ksh">/ pair</span></div>
       <div class="p-desc">${p.desc}</div>`;
-    grid.appendChild(card);
-  });
+    return card;
+  }
+
+  /* ── Render all products ─────────────────────────────────── */
+  const grid = document.getElementById('productGrid');
+
+  function renderAllProducts() {
+    grid.innerHTML = '';
+    const soldMap = getSoldOutMap();
+    const custom  = getCustomProducts();
+
+    // Hardcoded 48
+    products.forEach(p => {
+      const isSold = soldMap[p.name] === true;
+      const card = makeCard(p, isSold, { name: p.name });
+      grid.appendChild(card);
+      setTimeout(() => card.classList.add('up'), 80);
+    });
+
+    // Custom (admin-added)
+    custom.forEach(p => {
+      const isSold = soldMap[p.name] === true;
+      const card = makeCard(p, isSold, { name: p.name, customId: p.id });
+      grid.appendChild(card);
+      setTimeout(() => card.classList.add('up'), 80);
+    });
+  }
+
+  renderAllProducts();
 
   function toggleWish(el) {
     const on = el.classList.toggle('on');
     el.textContent = on ? '♥' : '♡';
-  }
-
-  /* ── Admin Panel ──────────────────────────────────────── */
-  const ADMIN_PASS = 'elona2025';
-  const STORAGE_KEY = 'elona_custom_products';
-
-  function getCustomProducts() {
-    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch { return []; }
-  }
-
-  function saveCustomProducts(arr) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
-  }
-
-  /* Merge custom products into the grid on load */
-  function loadCustomProducts() {
-    const custom = getCustomProducts();
-    custom.forEach(p => {
-      const card = document.createElement('div');
-      card.className = 'p-card reveal' + (p.soldOut ? ' sold' : '');
-      card.dataset.customId = p.id;
-      card.innerHTML = `
-        <div class="p-img">
-          <img src="${p.img}" alt="${p.name}" loading="lazy" />
-          ${p.soldOut ? '<div class="sold-overlay"><span class="sold-label">Sold Out</span></div>' : ''}
-          <div class="p-wish" onclick="toggleWish(this)" title="Save">♡</div>
-        </div>
-        <div class="p-cat">${p.cat}</div>
-        <div class="p-name">${p.name}</div>
-        <div class="p-price">KSH ${Number(p.price).toLocaleString()}<span class="ksh">/ pair</span></div>
-        <div class="p-desc">${p.desc}</div>`;
-      grid.appendChild(card);
-      setTimeout(() => card.classList.add('up'), 80);
-    });
   }
 
   function openAdmin() {
@@ -835,37 +838,33 @@
 
   function adminAddProduct(e) {
     e.preventDefault();
+    const name = document.getElementById('f-name').value.trim();
+    const custom = getCustomProducts();
+
+    // Prevent duplicate names
+    const allNames = [...products.map(p => p.name), ...custom.map(p => p.name)];
+    if (allNames.includes(name)) {
+      alert('A product with this name already exists. Use "Manage Stock" below to update it.');
+      return;
+    }
+
     const p = {
-      id: Date.now(),
+      id:      Date.now(),
       img:     document.getElementById('f-img').value.trim(),
-      name:    document.getElementById('f-name').value.trim(),
+      name,
       cat:     document.getElementById('f-cat').value,
       price:   Number(document.getElementById('f-price').value),
       desc:    document.getElementById('f-desc').value.trim(),
-      soldOut: document.getElementById('f-sold').checked,
     };
-    const custom = getCustomProducts();
     custom.push(p);
     saveCustomProducts(custom);
 
-    /* Add card to live grid */
-    const card = document.createElement('div');
-    card.className = 'p-card reveal' + (p.soldOut ? ' sold' : '');
-    card.dataset.customId = p.id;
-    card.innerHTML = `
-      <div class="p-img">
-        <img src="${p.img}" alt="${p.name}" loading="lazy" />
-        ${p.soldOut ? '<div class="sold-overlay"><span class="sold-label">Sold Out</span></div>' : ''}
-        <div class="p-wish" onclick="toggleWish(this)" title="Save">♡</div>
-      </div>
-      <div class="p-cat">${p.cat}</div>
-      <div class="p-name">${p.name}</div>
-      <div class="p-price">KSH ${p.price.toLocaleString()}<span class="ksh">/ pair</span></div>
-      <div class="p-desc">${p.desc}</div>`;
+    // Add card to live grid
+    const isSold = getSoldOutMap()[p.name] === true;
+    const card = makeCard(p, isSold, { name: p.name, customId: p.id });
     grid.appendChild(card);
     setTimeout(() => card.classList.add('up'), 80);
 
-    /* Reset form */
     e.target.reset();
     const msg = document.getElementById('adminSuccess');
     msg.style.display = 'block';
@@ -873,62 +872,74 @@
     renderAdminList();
   }
 
-  function adminToggleSold(id) {
-    const custom = getCustomProducts();
-    const p = custom.find(x => x.id === id);
-    if (!p) return;
-    p.soldOut = !p.soldOut;
-    saveCustomProducts(custom);
-    /* Update live card */
-    const card = document.querySelector(`[data-custom-id="${id}"]`);
-    if (card) {
-      card.classList.toggle('sold', p.soldOut);
+  /* Toggle sold out for ANY product (hardcoded or custom) by name */
+  function adminToggleSold(name) {
+    const soldMap = getSoldOutMap();
+    soldMap[name] = !soldMap[name];
+    saveSoldOutMap(soldMap);
+    const isSold = soldMap[name];
+
+    // Update every card with this name on the page
+    document.querySelectorAll(`[data-name="${CSS.escape(name)}"]`).forEach(card => {
+      card.classList.toggle('sold', isSold);
       const existing = card.querySelector('.sold-overlay');
-      if (p.soldOut && !existing) {
+      if (isSold && !existing) {
         const ov = document.createElement('div');
         ov.className = 'sold-overlay';
         ov.innerHTML = '<span class="sold-label">Sold Out</span>';
         card.querySelector('.p-img').appendChild(ov);
-      } else if (!p.soldOut && existing) {
+      } else if (!isSold && existing) {
         existing.remove();
       }
-    }
+    });
     renderAdminList();
   }
 
+  /* Delete a custom (admin-added) product */
   function adminDeleteProduct(id) {
     if (!confirm('Remove this product from the website?')) return;
     let custom = getCustomProducts();
+    const p = custom.find(x => x.id === id);
+    if (p) {
+      // Also clear its soldOut state
+      const soldMap = getSoldOutMap();
+      delete soldMap[p.name];
+      saveSoldOutMap(soldMap);
+    }
     custom = custom.filter(x => x.id !== id);
     saveCustomProducts(custom);
-    const card = document.querySelector(`[data-custom-id="${id}"]`);
-    if (card) card.remove();
+    renderAllProducts();
     renderAdminList();
   }
 
+  /* Render admin manage list — shows ALL products */
   function renderAdminList() {
-    const custom = getCustomProducts();
-    const list = document.getElementById('adminStockList');
-    if (!custom.length) {
-      list.innerHTML = '<div class="admin-empty">No custom stock added yet. Use the form above to add new products.</div>';
-      return;
-    }
-    list.innerHTML = custom.map(p => `
-      <div class="admin-stock-item">
-        <img class="admin-stock-thumb" src="${p.img}" alt="${p.name}" onerror="this.style.background='#ddd'" />
-        <div class="admin-stock-info">
-          <div class="admin-stock-name">${p.name}</div>
-          <div class="admin-stock-meta">${p.cat} &nbsp;·&nbsp; KSH ${Number(p.price).toLocaleString()} &nbsp;·&nbsp; ${p.soldOut ? '<strong>Sold Out</strong>' : 'In Stock'}</div>
-        </div>
-        <button class="admin-sold-toggle ${p.soldOut ? 'is-sold' : ''}" onclick="adminToggleSold(${p.id})">
-          ${p.soldOut ? 'Mark In Stock' : 'Mark Sold Out'}
-        </button>
-        <button class="admin-del" onclick="adminDeleteProduct(${p.id})" title="Remove">✕</button>
-      </div>`).join('');
-  }
+    const soldMap = getSoldOutMap();
+    const custom  = getCustomProducts();
+    const list    = document.getElementById('adminStockList');
 
-  /* Load any previously saved custom products */
-  loadCustomProducts();
+    // Combine hardcoded + custom
+    const allProducts = [
+      ...products.map(p => ({ ...p, isCustom: false })),
+      ...custom.map(p  => ({ ...p, isCustom: true  }))
+    ];
+
+    list.innerHTML = allProducts.map(p => {
+      const isSold = soldMap[p.name] === true;
+      return `
+        <div class="admin-stock-item">
+          <img class="admin-stock-thumb" src="${p.img}" alt="${p.name}" onerror="this.style.background='#ddd'" />
+          <div class="admin-stock-info">
+            <div class="admin-stock-name">${p.name}</div>
+            <div class="admin-stock-meta">${p.cat} &nbsp;·&nbsp; KSH ${Number(p.price).toLocaleString()} &nbsp;·&nbsp; ${isSold ? '<strong style="color:#b43c3c">Sold Out</strong>' : '<span style="color:#3a6b28">In Stock</span>'}</div>
+          </div>
+          <button class="admin-sold-toggle ${isSold ? 'is-sold' : ''}" onclick="adminToggleSold(${JSON.stringify(p.name)})">
+            ${isSold ? '✓ Mark In Stock' : 'Mark Sold Out'}
+          </button>
+          ${p.isCustom ? `<button class="admin-del" onclick="adminDeleteProduct(${p.id})" title="Remove">✕</button>` : ''}
+        </div>`;
+    }).join('');
+  }
 
   /* Scroll reveal */
   const io = new IntersectionObserver((entries) => {
