@@ -1012,9 +1012,6 @@
     const card = document.createElement('div');
     card.className = 'p-card reveal' + (isSold ? ' sold' : '');
     if (dataset) Object.entries(dataset).forEach(([k,v]) => card.dataset[k] = v);
-    const addBtn = isSold
-      ? `<button class="p-add-cart" disabled>Sold Out</button>`
-      : `<button class="p-add-cart" onclick="addToCart(${JSON.stringify(p.name)},${JSON.stringify(p.img)},${JSON.stringify(p.cat)},${p.price},this)">Add to Cart</button>`;
     card.innerHTML = `
       <div class="p-img">
         <img src="${p.img}" alt="${p.name}" loading="lazy" />
@@ -1025,7 +1022,11 @@
       <div class="p-name">${p.name}</div>
       <div class="p-price">KSH ${Number(p.price).toLocaleString()}<span class="ksh">/ pair</span></div>
       <div class="p-desc">${p.desc}</div>
-      ${addBtn}`;
+      <button class="p-add-cart"${isSold ? ' disabled' : ''}>${isSold ? 'Sold Out' : 'Add to Cart'}</button>`;
+    if (!isSold) {
+      const btn = card.querySelector('.p-add-cart');
+      btn.addEventListener('click', () => addToCart(p.name, p.img, p.cat, p.price, btn));
+    }
     return card;
   }
 
