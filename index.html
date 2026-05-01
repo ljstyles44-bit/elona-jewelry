@@ -1168,14 +1168,15 @@
 
     list.innerHTML = allProducts.map(p => {
       const isSold = soldMap[p.name] === true;
+      const safeName = p.name.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
       return `
         <div class="admin-stock-item">
-          <img class="admin-stock-thumb" src="${p.img}" alt="${p.name}" onerror="this.style.background='#ddd'" />
+          <img class="admin-stock-thumb" src="${p.img}" alt="${safeName}" onerror="this.style.background='#ddd'" />
           <div class="admin-stock-info">
             <div class="admin-stock-name">${p.name}</div>
             <div class="admin-stock-meta">${p.cat} &nbsp;·&nbsp; KSH ${Number(p.price).toLocaleString()} &nbsp;·&nbsp; ${isSold ? '<strong style="color:#b43c3c">Sold Out</strong>' : '<span style="color:#3a6b28">In Stock</span>'}</div>
           </div>
-          <button class="admin-sold-toggle ${isSold ? 'is-sold' : ''}" onclick="adminToggleSold(${JSON.stringify(p.name)})">
+          <button class="admin-sold-toggle ${isSold ? 'is-sold' : ''}" data-name="${safeName}" onclick="adminToggleSold(this.dataset.name)">
             ${isSold ? '✓ Mark In Stock' : 'Mark Sold Out'}
           </button>
           ${p.isCustom ? `<button class="admin-del" onclick="adminDeleteProduct(${p.id})" title="Remove">✕</button>` : ''}
