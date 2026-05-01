@@ -1119,21 +1119,7 @@
     const soldMap = getSoldOutMap();
     soldMap[name] = !soldMap[name];
     saveSoldOutMap(soldMap);
-    const isSold = soldMap[name];
-
-    // Update every card with this name on the page
-    document.querySelectorAll(`[data-name="${CSS.escape(name)}"]`).forEach(card => {
-      card.classList.toggle('sold', isSold);
-      const existing = card.querySelector('.sold-overlay');
-      if (isSold && !existing) {
-        const ov = document.createElement('div');
-        ov.className = 'sold-overlay';
-        ov.innerHTML = '<span class="sold-label">Sold Out</span>';
-        card.querySelector('.p-img').appendChild(ov);
-      } else if (!isSold && existing) {
-        existing.remove();
-      }
-    });
+    renderAllProducts();   // full re-render — always correct
     renderAdminList();
   }
 
@@ -1156,32 +1142,62 @@
 
   /* Render admin manage list — shows ALL products */
   function renderAdminList() {
-    const soldMap = getSoldOutMap();
-    const custom  = getCustomProducts();
-    const list    = document.getElementById('adminStockList');
+    const soldMap    = getSoldOutMap();
+    const custom     = getCustomProducts();
+    const list       = document.getElementById('adminStockList');
+    list.innerHTML   = '';
 
-    // Combine hardcoded + custom
     const allProducts = [
       ...products.map(p => ({ ...p, isCustom: false })),
       ...custom.map(p  => ({ ...p, isCustom: true  }))
     ];
 
-    list.innerHTML = allProducts.map(p => {
+    allProducts.forEach(p => {
       const isSold = soldMap[p.name] === true;
-      const safeName = p.name.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
-      return `
-        <div class="admin-stock-item">
-          <img class="admin-stock-thumb" src="${p.img}" alt="${safeName}" onerror="this.style.background='#ddd'" />
-          <div class="admin-stock-info">
-            <div class="admin-stock-name">${p.name}</div>
-            <div class="admin-stock-meta">${p.cat} &nbsp;·&nbsp; KSH ${Number(p.price).toLocaleString()} &nbsp;·&nbsp; ${isSold ? '<strong style="color:#b43c3c">Sold Out</strong>' : '<span style="color:#3a6b28">In Stock</span>'}</div>
-          </div>
-          <button class="admin-sold-toggle ${isSold ? 'is-sold' : ''}" data-name="${safeName}" onclick="adminToggleSold(this.dataset.name)">
-            ${isSold ? '✓ Mark In Stock' : 'Mark Sold Out'}
-          </button>
-          ${p.isCustom ? `<button class="admin-del" onclick="adminDeleteProduct(${p.id})" title="Remove">✕</button>` : ''}
+
+      const item = document.createElement('div');
+      item.className = 'admin-stock-item';
+
+      // Thumbnail
+      const img = document.createElement('img');
+      img.className = 'admin-stock-thumb';
+      img.src = p.img;
+      img.alt = p.name;
+      img.onerror = () => { img.style.background = '#ddd'; };
+
+      // Info
+      const info = document.createElement('div');
+      info.className = 'admin-stock-info';
+      info.innerHTML = `
+        <div class="admin-stock-name">${p.name}</div>
+        <div class="admin-stock-meta">${p.cat} &nbsp;·&nbsp; KSH ${Number(p.price).toLocaleString()} &nbsp;·&nbsp;
+          ${isSold
+            ? '<strong style="color:#b43c3c">Sold Out</strong>'
+            : '<span style="color:#3a6b28">In Stock</span>'}
         </div>`;
-    }).join('');
+
+      // Sold-out toggle button — addEventListener, NO inline onclick
+      const toggleBtn = document.createElement('button');
+      toggleBtn.className = 'admin-sold-toggle' + (isSold ? ' is-sold' : '');
+      toggleBtn.textContent = isSold ? '✓ Mark In Stock' : 'Mark Sold Out';
+      toggleBtn.addEventListener('click', () => adminToggleSold(p.name));
+
+      item.appendChild(img);
+      item.appendChild(info);
+      item.appendChild(toggleBtn);
+
+      // Delete button for custom products — addEventListener, NO inline onclick
+      if (p.isCustom) {
+        const delBtn = document.createElement('button');
+        delBtn.className = 'admin-del';
+        delBtn.title = 'Remove product';
+        delBtn.textContent = '✕';
+        delBtn.addEventListener('click', () => adminDeleteProduct(p.id));
+        item.appendChild(delBtn);
+      }
+
+      list.appendChild(item);
+    });
   }
 
   /* Scroll reveal */
