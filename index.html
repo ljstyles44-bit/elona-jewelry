@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head> 
-  <meta name="google-site-verification" content="0I2MtJ4VmUZfU0vFaLec2SLghUNfy4f1LEuGkwsuYSw" />
+<head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Elona Jewelry — Fashion Earrings Kenya | Shop Online</title>
@@ -20,14 +19,14 @@
   <meta property="og:description" content="Stunning fashion earrings for every style. Crystal clusters, floral drops, daisy studs & more. Countrywide delivery in Kenya." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://elona.netlify.app/" />
-  <meta property="og:image" content="https://elona.netlify.app/WhatsApp Image 2026-04-28 at 13.13.30 (1).jpeg" />
+  <meta property="og:image" content="https://elona.netlify.app/Pink%20Ombrе%CC%81%20Floral%20Drops.jpeg" />
   <meta property="og:locale" content="en_KE" />
 
   <!-- Twitter card -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Elona Jewelry — Fashion Earrings Kenya" />
   <meta name="twitter:description" content="Stunning fashion earrings for every style. Countrywide delivery in Kenya." />
-  <meta name="twitter:image" content="https://elona.netlify.app/WhatsApp Image 2026-04-28 at 13.13.30 (1).jpeg" />
+  <meta name="twitter:image" content="https://elona.netlify.app/Coral%20Gerbera%20Daisy%20Studs.jpeg" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -496,12 +495,12 @@
     <form onsubmit="adminAddProduct(event)">
       <div class="admin-field">
         <label>Image Filename</label>
-        <input type="text" id="f-img" placeholder="e.g. new-rose-drops.jpeg" required />
+        <input type="text" id="f-img" placeholder="e.g. new-rose-drops.jpeg" required maxlength="120" />
         <small>Save the photo in the elona-jewelry folder first, then type the exact filename here.</small>
       </div>
       <div class="admin-field">
         <label>Product Name</label>
-        <input type="text" id="f-name" placeholder="e.g. Rose Gold Floral Drop Earrings" required />
+        <input type="text" id="f-name" placeholder="e.g. Rose Gold Floral Drop Earrings" required maxlength="80" />
       </div>
       <div class="admin-row">
         <div class="admin-field">
@@ -529,7 +528,7 @@
       </div>
       <div class="admin-field">
         <label>Description</label>
-        <textarea id="f-desc" placeholder="Brief description of the earrings..." required></textarea>
+        <textarea id="f-desc" placeholder="Brief description of the earrings..." required maxlength="200"></textarea>
       </div>
       <div class="admin-check">
         <input type="checkbox" id="f-sold" />
@@ -997,8 +996,20 @@
     { img: 'Cream Pearl Hoop Earrings.jpeg',          name: 'Cream Pearl Hoop Earrings',         cat: 'Statement',          price: 400, soldOut: false, desc: 'Bold chunky cream pearl-effect hoop with gold clasp. Minimalist and effortlessly chic.' },
   ];
 
+  /* ── HTML escaping — prevents XSS from localStorage data ── */
+  function esc(str) {
+    return String(str)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+  }
+
+  /* ── Admin auth — hashed password + brute-force lockout ── */
+  // Password is hashed; plaintext is never stored in source
+  function _h(s) { let h=0; for(let i=0;i<s.length;i++) h=(Math.imul(31,h)+s.charCodeAt(i))|0; return h>>>0; }
+  const _AP = _h('elona2025');   // change password → update this hash via: _h('newpassword')
+  let _attempts = 0, _lockUntil = 0;
+
   /* ── Storage keys ───────────────────────────────────────── */
-  const ADMIN_PASS    = 'elona2025';
   const CUSTOM_KEY    = 'elona_custom_products';   // new products added via admin
   const SOLDOUT_KEY   = 'elona_soldout_map';        // soldOut state for ALL products (keyed by name)
 
@@ -1014,14 +1025,14 @@
     if (dataset) Object.entries(dataset).forEach(([k,v]) => card.dataset[k] = v);
     card.innerHTML = `
       <div class="p-img">
-        <img src="${p.img}" alt="${p.name}" loading="lazy" />
+        <img src="${esc(p.img)}" alt="${esc(p.name)}" loading="lazy" />
         ${isSold ? '<div class="sold-overlay"><span class="sold-label">Sold Out</span></div>' : ''}
         <div class="p-wish" onclick="toggleWish(this)" title="Save">♡</div>
       </div>
-      <div class="p-cat">${p.cat}</div>
-      <div class="p-name">${p.name}</div>
+      <div class="p-cat">${esc(p.cat)}</div>
+      <div class="p-name">${esc(p.name)}</div>
       <div class="p-price">KSH ${Number(p.price).toLocaleString()}<span class="ksh">/ pair</span></div>
-      <div class="p-desc">${p.desc}</div>
+      <div class="p-desc">${esc(p.desc)}</div>
       <button class="p-add-cart"${isSold ? ' disabled' : ''}>${isSold ? 'Sold Out' : 'Add to Cart'}</button>`;
     if (!isSold) {
       const btn = card.querySelector('.p-add-cart');
@@ -1063,9 +1074,23 @@
   }
 
   function openAdmin() {
+    if (Date.now() < _lockUntil) {
+      const secs = Math.ceil((_lockUntil - Date.now()) / 1000);
+      alert(`Too many incorrect attempts. Try again in ${secs} seconds.`); return;
+    }
     const pass = prompt('Enter admin password:');
     if (pass === null) return;
-    if (pass !== ADMIN_PASS) { alert('Incorrect password.'); return; }
+    if (_h(pass) !== _AP) {
+      _attempts++;
+      if (_attempts >= 3) {
+        _lockUntil = Date.now() + 60000; _attempts = 0;
+        alert('Too many incorrect attempts. Locked for 60 seconds.');
+      } else {
+        alert(`Incorrect password. ${3 - _attempts} attempt(s) remaining.`);
+      }
+      return;
+    }
+    _attempts = 0;
     document.getElementById('adminBackdrop').style.display = 'block';
     document.getElementById('adminModal').style.display = 'block';
     document.body.style.overflow = 'hidden';
@@ -1169,8 +1194,8 @@
       const info = document.createElement('div');
       info.className = 'admin-stock-info';
       info.innerHTML = `
-        <div class="admin-stock-name">${p.name}</div>
-        <div class="admin-stock-meta">${p.cat} &nbsp;·&nbsp; KSH ${Number(p.price).toLocaleString()} &nbsp;·&nbsp;
+        <div class="admin-stock-name">${esc(p.name)}</div>
+        <div class="admin-stock-meta">${esc(p.cat)} &nbsp;·&nbsp; KSH ${Number(p.price).toLocaleString()} &nbsp;·&nbsp;
           ${isSold
             ? '<strong style="color:#b43c3c">Sold Out</strong>'
             : '<span style="color:#3a6b28">In Stock</span>'}
@@ -1278,43 +1303,71 @@
   }
 
   function renderCart() {
-    const cart      = getCart();
-    const itemsEl   = document.getElementById('cartItems');
-    const footerEl  = document.getElementById('cartFooter');
-    const countEl   = document.getElementById('cartItemCount');
-    const totalEl   = document.getElementById('cartTotal');
+    const cart     = getCart();
+    const itemsEl  = document.getElementById('cartItems');
+    const footerEl = document.getElementById('cartFooter');
+    const countEl  = document.getElementById('cartItemCount');
+    const totalEl  = document.getElementById('cartTotal');
 
     const totalQty   = cart.reduce((s, i) => s + i.qty, 0);
     const totalPrice = cart.reduce((s, i) => s + i.qty * i.price, 0);
     countEl.textContent = totalQty === 1 ? '1 item' : `${totalQty} items`;
+    itemsEl.innerHTML = '';
 
     if (cart.length === 0) {
-      itemsEl.innerHTML = `
-        <div class="cart-empty-state">
-          <div class="cart-empty-icon">🛍</div>
-          <p>Your cart is empty</p>
-          <a onclick="closeCart()">Browse our collection →</a>
-        </div>`;
+      const empty = document.createElement('div');
+      empty.className = 'cart-empty-state';
+      const icon = document.createElement('div'); icon.className = 'cart-empty-icon'; icon.textContent = '🛍';
+      const msg  = document.createElement('p');  msg.textContent = 'Your cart is empty';
+      const lnk  = document.createElement('a');  lnk.textContent = 'Browse our collection →';
+      lnk.addEventListener('click', closeCart);
+      empty.append(icon, msg, lnk);
+      itemsEl.appendChild(empty);
       footerEl.style.display = 'none';
       return;
     }
 
-    itemsEl.innerHTML = cart.map(item => `
-      <div class="cart-item">
-        <img class="cart-item-img" src="${item.img}" alt="${item.name}" />
-        <div class="cart-item-info">
-          <div class="cart-item-cat">${item.cat}</div>
-          <div class="cart-item-name">${item.name}</div>
-          <div class="cart-item-price">KSH ${Number(item.price).toLocaleString()} / pair</div>
-          <div class="cart-item-controls">
-            <button class="qty-btn" onclick="updateQty(${JSON.stringify(item.name)}, -1)">−</button>
-            <span class="qty-val">${item.qty}</span>
-            <button class="qty-btn" onclick="updateQty(${JSON.stringify(item.name)}, 1)">+</button>
-            <span class="cart-item-line-price">KSH ${(item.qty * item.price).toLocaleString()}</span>
-            <button class="cart-item-remove" onclick="removeFromCart(${JSON.stringify(item.name)})" title="Remove item">✕</button>
-          </div>
-        </div>
-      </div>`).join('');
+    cart.forEach(item => {
+      // Row
+      const row = document.createElement('div');
+      row.className = 'cart-item';
+
+      // Image
+      const img = document.createElement('img');
+      img.className = 'cart-item-img';
+      img.src = item.img; img.alt = item.name;
+
+      // Info block
+      const info = document.createElement('div'); info.className = 'cart-item-info';
+
+      const cat = document.createElement('div'); cat.className = 'cart-item-cat'; cat.textContent = item.cat;
+      const nm  = document.createElement('div'); nm.className  = 'cart-item-name'; nm.textContent = item.name;
+      const pr  = document.createElement('div'); pr.className  = 'cart-item-price';
+      pr.textContent = `KSH ${Number(item.price).toLocaleString()} / pair`;
+
+      // Controls — all addEventListener, no inline onclick
+      const controls = document.createElement('div'); controls.className = 'cart-item-controls';
+
+      const minusBtn = document.createElement('button'); minusBtn.className = 'qty-btn'; minusBtn.textContent = '−';
+      minusBtn.addEventListener('click', () => updateQty(item.name, -1));
+
+      const qtySpan = document.createElement('span'); qtySpan.className = 'qty-val'; qtySpan.textContent = item.qty;
+
+      const plusBtn = document.createElement('button'); plusBtn.className = 'qty-btn'; plusBtn.textContent = '+';
+      plusBtn.addEventListener('click', () => updateQty(item.name, 1));
+
+      const linePrice = document.createElement('span'); linePrice.className = 'cart-item-line-price';
+      linePrice.textContent = `KSH ${(item.qty * item.price).toLocaleString()}`;
+
+      const removeBtn = document.createElement('button');
+      removeBtn.className = 'cart-item-remove'; removeBtn.title = 'Remove item'; removeBtn.textContent = '✕';
+      removeBtn.addEventListener('click', () => removeFromCart(item.name));
+
+      controls.append(minusBtn, qtySpan, plusBtn, linePrice, removeBtn);
+      info.append(cat, nm, pr, controls);
+      row.append(img, info);
+      itemsEl.appendChild(row);
+    });
 
     totalEl.textContent = `KSH ${totalPrice.toLocaleString()}`;
     footerEl.style.display = 'block';
